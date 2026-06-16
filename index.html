@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Evaluación · Ciencia e Ingeniería del Vidrio</title>
+<style>
+/* ══ RESET & ANTI-COPY ══════════════════════════════════════ */
+*, *::before, *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* ══ BASE ════════════════════════════════════════════════════ */
+:root {
+  --primary:   #1c6e94;
+  --primary-d: #145b7a;
+  --primary-l: #e3f0f7;
+  --selected:  #1e6f9f;
+  --green:     #1a9b5a;
+  --green-l:   #dcf5e3;
+  --red:       #c93a3a;
+  --red-l:     #fde8e8;
+  --text:      #0b2b3b;
+  --text2:     #1c3b4d;
+  --muted:     #2c5770;
+  --bg:        linear-gradient(145deg,#f2f7fb 0%,#e3edf5 100%);
+  --surface:   rgba(255,255,255,0.88);
+  --card:      #ffffff;
+  --border:    #cfdfe9;
+  --opt-bg:    #f6fafe;
+  --radius-xl: 48px;
+  --radius-lg: 32px;
+  --radius-md: 20px;
+  --radius-sm: 60px;
+  --font: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+  --shadow-container: 0 30px 60px -15px rgba(0,40,60,.25), 0 0 0 1px rgba(255,255,255,.6);
+  --shadow-card: 0 6px 20px rgba(0,30,50,.09);
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  overscroll-behavior: none;
+  touch-action: pan-x pan-y;
+}
+
+/* ══ WELCOME SCREEN ════════════════════════════════════════ */
+#welcome-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 24px 20px;
+  background: var(--bg);
+}
+
+.welcome-wrap {
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-xl);
+  padding: 44px 40px 48px;
+  max-width: 680px;
+  width: 100%;
+  box-shadow: var(--shadow-container);
+  text-align: center;
+}
+
+.welcome-icon { font-size: 3.6rem; display: block; margin-bottom: 18px; }
+
+.welcome-wrap h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.welcome-wrap .subtitle {
+  font-size: .92rem;
+  color: var(--muted);
+  margin-bottom: 32px;
+  font-weight: 400;
+}
+
+.instructions-box {
+  background: var(--primary-l);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  text-align: left;
+  margin-bottom: 36px;
+}
+
+.instructions-box h3 {
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--primary-d);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.instructions-box ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.instructions-box li {
+  display: flex;
+  gap: 10px;
+  font-size: .875rem;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+.instructions-box li::before {
+  content: '▸';
+  color: var(--primary);
+  font-size: .85rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.btn-start {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 17px 30px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.08rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(28,110,148,.3);
+  transition: background .15s, transform .1s;
+  letter-spacing: .2px;
+}
+.btn-start:hover { background: var(--primary-d); }
+.btn-start:active { transform: scale(.98); }
+
+/* ══ QUIZ WRAPPER ══════════════════════════════════════════ */
+#quiz-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px 16px 32px;
+}
+
+.quiz-container {
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-xl);
+  padding: 28px 32px 36px;
+  max-width: 860px;
+  width: 100%;
+  box-shadow: var(--shadow-container);
+}
+
+/* ══ HEADER ════════════════════════════════════════════════ */
+.qz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-bottom: 14px;
+}
+
+.qz-header h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qz-header h1 small {
+  font-size: .82rem;
+  font-weight: 400;
+  color: var(--muted);
+  background: rgba(44,87,112,.12);
+  padding: 3px 14px;
+  border-radius: var(--radius-sm);
+}
+
+.progress-chip {
+  font-weight: 500;
+  color: var(--primary-d);
+  background: rgba(29,74,100,.08);
+  padding: 6px 18px;
+  border-radius: var(--radius-sm);
+  font-size: .92rem;
+}
+
+/* ══ PROGRESS BAR ══════════════════════════════════════════ */
+.prog-wrap {
+  width: 100%;
+  height: 9px;
+  background: #d8e5ed;
+  border-radius: 20px;
+  margin: 0 0 22px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.07);
+}
+
+.prog-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary), #43b0d1);
+  border-radius: 20px;
+  transition: width .35s ease;
+}
+
+/* ══ QUESTION CARD ══════════════════════════════════════════ */
+.question-card {
+  background: var(--card);
+  padding: 28px 30px 24px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 14px;
+}
+
+.q-number {
+  display: inline-block;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  background: var(--primary-l);
+  padding: 3px 18px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+
+.q-text {
+  font-size: 1.22rem;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+/* ══ OPTIONS ════════════════════════════════════════════════ */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.opt-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: var(--opt-bg);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text2);
+  font-weight: 450;
+  transition: background .14s, border-color .14s;
+}
+
+.opt-item:hover:not(.locked) {
+  background: #eaf3fa;
+  border-color: #9dc6df;
+}
+
+/* Radio circle */
+.opt-radio {
+  width: 22px; height: 22px; min-width: 22px;
+  border-radius: 50%;
+  border: 2px solid #8fb3cc;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .14s, background .14s;
+  flex-shrink: 0;
+}
+
+.opt-radio::after {
+  content: '';
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  transition: opacity .14s;
+}
+
+.opt-label { flex: 1; line-height: 1.45; }
+
+/* HIGH-VISIBILITY SELECTED STATE — no correct/wrong feedback */
+.opt-item.selected {
+  background: var(--selected);
+  border-color: var(--selected);
+  color: #fff;
+}
+.opt-item.selected .opt-radio {
+  border-color: #fff;
+  background: #fff;
+}
+.opt-item.selected .opt-radio::after {
+  background: var(--selected);
+  opacity: 1;
+}
+
+/* Post-correction states */
+.opt-item.correct {
+  background: var(--green-l);
+  border-color: var(--green);
+}
+.opt-item.correct .opt-radio { border-color: var(--green); background: var(--green); }
+.opt-item.correct .opt-radio::after { background: #fff; opacity: 1; }
+
+.opt-item.wrong {
+  background: var(--red-l);
+  border-color: var(--red);
+}
+.opt-item.wrong .opt-radio { border-color: var(--red); background: var(--red); }
+.opt-item.wrong .opt-radio::after { background: #fff; opacity: 1; }
+
+.opt-item.locked { cursor: default; }
+.opt-item.locked:hover { background: var(--opt-bg); border-color: transparent; }
+.opt-item.locked.correct:hover { background: var(--green-l); border-color: var(--green); }
+.opt-item.locked.wrong:hover   { background: var(--red-l);   border-color: var(--red); }
+.opt-item.locked.selected:hover { background: var(--selected); border-color: var(--selected); }
+
+/* ══ NAVIGATION ════════════════════════════════════════════ */
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.btn {
+  padding: 11px 26px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 120px;
+  justify-content: center;
+  font-family: var(--font);
+}
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .38; cursor: not-allowed; transform: none !important; }
+
+.btn-ghost  { background: #f2f7fb; color: var(--text2); }
+.btn-ghost:hover:not(:disabled)  { background: #e3edf5; border-color: #9dc6df; }
+
+.btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-primary:hover:not(:disabled) { background: var(--primary-d); border-color: var(--primary-d); }
+
+.btn-finish  { background: #1f8b6b; color: #fff; border-color: #1f8b6b; }
+.btn-finish:hover:not(:disabled)  { background: #157254; }
+
+.btn-correction {
+  background: #fff;
+  border: 1.5px solid var(--primary);
+  color: var(--primary);
+  font-weight: 700;
+}
+.btn-correction:hover { background: var(--primary-l); }
+
+.btn-new {
+  background: #1f8b6b;
+  color: #fff;
+  border-color: #1f8b6b;
+  display: none; /* hidden until correction unlocked */
+}
+.btn-new:hover { background: #157254; }
+
+.nav-right { display: flex; gap: 10px; align-items: center; }
+.hidden { display: none !important; }
+
+/* ══ RESULTS SCREEN ════════════════════════════════════════ */
+#results-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 28px 16px 40px;
+}
+
+.results-container {
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-xl);
+  padding: 40px 36px;
+  max-width: 860px;
+  width: 100%;
+  box-shadow: var(--shadow-container);
+  text-align: center;
+}
+
+.results-container h2 {
+  font-size: 1.7rem;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.score-big {
+  font-size: 4.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 14px 0 8px;
+  line-height: 1;
+}
+
+.score-pct {
+  display: inline-block;
+  font-size: 1.2rem;
+  color: var(--primary-d);
+  background: var(--primary-l);
+  padding: 8px 30px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 22px;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.stat-chip {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 12px 28px;
+  border-radius: 40px;
+  font-size: .95rem;
+  font-weight: 500;
+  color: var(--text2);
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.results-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 34px;
+}
+
+/* REVIEW LIST */
+.review-title {
+  font-size: .82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.review-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  text-align: left;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.ri-q {
+  font-size: .93rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.45;
+}
+
+.ri-ans {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: .85rem;
+  color: var(--text2);
+}
+
+.ri-tag {
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+.ri-tag.ok  { background: var(--green-l); color: var(--green); border: 1px solid var(--green); }
+.ri-tag.err { background: var(--red-l);   color: var(--red);   border: 1px solid var(--red); }
+.ri-tag.sk  { background: var(--primary-l); color: var(--primary); border: 1px solid var(--primary); }
+
+.ri-correct-note {
+  font-size: .82rem;
+  color: var(--green);
+  margin-top: 4px;
+  display: block;
+}
+
+/* ══ MODAL ══════════════════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(11,43,59,.6);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-box {
+  background: #fff;
+  border-radius: 32px;
+  padding: 38px 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0,40,60,.25);
+}
+
+.modal-icon { font-size: 2.8rem; display: block; margin-bottom: 14px; }
+.modal-box h3 { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 7px; }
+.modal-box p  { font-size: .87rem; color: var(--muted); margin-bottom: 22px; }
+
+.modal-input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  font-size: .97rem;
+  font-family: var(--font);
+  color: var(--text);
+  outline: none;
+  margin-bottom: 6px;
+  -webkit-user-select: text;
+  user-select: text;
+  transition: border-color .15s;
+}
+.modal-input:focus { border-color: var(--primary); }
+
+.modal-error { font-size: .82rem; color: var(--red); min-height: 18px; text-align: left; margin-bottom: 18px; }
+
+.modal-actions { display: flex; gap: 10px; }
+.modal-actions .btn { flex: 1; }
+.btn-confirm { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-confirm:hover { background: var(--primary-d); }
+.btn-cancel2 { background: #f2f7fb; color: var(--muted); }
+
+/* ══ RESPONSIVE ════════════════════════════════════════════ */
+@media (min-width: 900px) {
+  .quiz-container, .results-container { padding: 32px 44px 42px; }
+  .q-text { font-size: 1.3rem; }
+}
+
+@media (max-width: 580px) {
+  .welcome-wrap { padding: 28px 20px 32px; }
+  .welcome-wrap h1 { font-size: 1.4rem; }
+  .quiz-container { padding: 18px 16px 22px; border-radius: 28px; }
+  .question-card { padding: 18px 16px; border-radius: 22px; }
+  .q-text { font-size: 1.08rem; }
+  .opt-item { font-size: .92rem; padding: 12px 14px; }
+  .btn { min-width: 90px; padding: 10px 16px; font-size: .88rem; }
+  .results-container { padding: 24px 18px; border-radius: 28px; }
+  .score-big { font-size: 3.2rem; }
+  .results-actions { flex-direction: column; }
+  .results-actions .btn { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ WELCOME SCREEN ════════════════════════════════════════ -->
+<div id="welcome-screen">
+  <div class="welcome-wrap">
+    <span class="welcome-icon">🧪</span>
+    <h1>Evaluación · Ciencia del Vidrio</h1>
+    <p class="subtitle">Ciencia e Ingeniería del Vidrio · Evaluación Técnica</p>
+
+    <div class="instructions-box">
+      <h3>📋 Instrucciones</h3>
+      <ul>
+        <li>Se seleccionarán <strong>10 preguntas</strong> aleatoriamente del banco total.</li>
+        <li>Las opciones de cada pregunta estarán <strong>mezcladas aleatoriamente</strong>.</li>
+        <li>Seleccioná una opción y navegá entre preguntas. Podés cambiar tu respuesta antes de finalizar.</li>
+        <li>Al terminar, presioná <strong>"Finalizar"</strong> y entregá el dispositivo al docente para la corrección.</li>
+        <li>La corrección requiere una <strong>contraseña docente</strong>. No intentes adivinarla.</li>
+        <li>La evaluación se ejecuta en <strong>pantalla completa</strong>. No cierres ni recargues la página.</li>
+        <li>Está prohibido copiar, fotografiar o compartir las preguntas durante la evaluación.</li>
+      </ul>
+    </div>
+
+    <button class="btn-start" onclick="startQuiz()">▶ Comenzar Evaluación</button>
+  </div>
+</div>
+
+<!-- ══ QUIZ SCREEN ════════════════════════════════════════════ -->
+<div id="quiz-screen">
+  <div class="quiz-container">
+
+    <!-- Header -->
+    <div class="qz-header">
+      <h1>🧪 Vidrio <small>técnico</small></h1>
+      <div class="progress-chip" id="prog-text">0 / 10</div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="prog-wrap">
+      <div class="prog-fill" id="prog-fill"></div>
+    </div>
+
+    <!-- Question card -->
+    <div class="question-card">
+      <div class="q-number" id="q-num">Pregunta 1 de 10</div>
+      <div class="q-text"  id="q-text"></div>
+      <div class="options-list" id="options"></div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-row">
+      <button class="btn btn-ghost" id="btn-prev" onclick="navigate(-1)" disabled>◀ Anterior</button>
+
+      <div class="nav-right">
+        <button class="btn btn-correction" id="btn-correction" onclick="openModal()">🔐 Corrección</button>
+        <button class="btn btn-new"        id="btn-new"        onclick="newQuiz()">🔄 Nueva prueba</button>
+        <button class="btn btn-finish hidden" id="btn-finish"  onclick="finishQuiz()">Finalizar ✓</button>
+        <button class="btn btn-primary"    id="btn-next"       onclick="navigate(1)">Siguiente ▶</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ RESULTS SCREEN ════════════════════════════════════════ -->
+<div id="results-screen">
+  <div class="results-container">
+    <h2>📊 Resultado de la Evaluación</h2>
+    <div class="score-big" id="res-score">0 / 10</div>
+    <div class="score-pct"  id="res-pct">0% de aciertos</div>
+
+    <div class="stats-row">
+      <div class="stat-chip" id="st-ok">✅ Correctas: 0</div>
+      <div class="stat-chip" id="st-err">❌ Incorrectas: 0</div>
+      <div class="stat-chip" id="st-skip">⬜ Sin responder: 0</div>
+    </div>
+
+    <div class="results-actions">
+      <button class="btn btn-new" id="btn-new-results" onclick="newQuiz()" style="display:none;">🔄 Nueva prueba</button>
+    </div>
+
+    <div class="review-title">Revisión detallada de respuestas</div>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<!-- ══ PASSWORD MODAL ════════════════════════════════════════ -->
+<div class="modal-overlay" id="pw-modal">
+  <div class="modal-box">
+    <span class="modal-icon">🔐</span>
+    <h3>Contraseña de Corrección</h3>
+    <p>Ingresá la contraseña docente para ver los resultados de la evaluación.</p>
+    <input class="modal-input" type="password" id="pw-input" placeholder="Contraseña…"
+           onkeydown="if(event.key==='Enter') confirmPw()"/>
+    <div class="modal-error" id="pw-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel2" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-confirm" onclick="confirmPw()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   SECURITY MEASURES
+══════════════════════════════════════════════════════════════ */
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+document.addEventListener('keydown', e => {
+  const k = e.key;
+  if (['F12','F5'].includes(k)) { e.preventDefault(); return; }
+  if (e.ctrlKey || e.metaKey) {
+    if (['u','s','i','j','c','x','v','a','p','f'].includes(k.toLowerCase())) {
+      e.preventDefault(); return;
+    }
+  }
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
+    if (['i','j','c','delete'].includes(k.toLowerCase())) {
+      e.preventDefault(); return;
+    }
+  }
+});
+
+['copy','cut','paste','dragstart'].forEach(ev =>
+  document.addEventListener(ev, e => e.preventDefault())
+);
+
+history.pushState(null, '', location.href);
+window.addEventListener('popstate', () => {
+  history.pushState(null, '', location.href);
+  alert('⚠️ La navegación hacia atrás está deshabilitada durante la evaluación.');
+});
+
+window.addEventListener('beforeunload', e => {
+  e.preventDefault();
+  e.returnValue = 'Si salís perderás tu evaluación. ¿Estás seguro?';
+});
+
+document.addEventListener('touchmove', e => {
+  if (e.touches.length > 1) e.preventDefault();
+}, { passive: false });
+
+let lastTY = 0;
+document.addEventListener('touchstart', e => { lastTY = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchmove', e => {
+  const y = e.touches[0].clientY;
+  if (document.documentElement.scrollTop === 0 && y > lastTY) e.preventDefault();
+  lastTY = y;
+}, { passive: false });
+
+/* ══════════════════════════════════════════════════════════════
+   BANCO DE PREGUNTAS — 20 preguntas · Ciencia e Ingeniería del Vidrio
+══════════════════════════════════════════════════════════════ */
+const ALL_QUESTIONS = [
+  {
+    q: "¿Cuál es la implicación termodinámica fundamental de que el vidrio sea clasificado como un \"sólido amorfo\" o \"líquido superenfriado\"?",
+    opts: [
+      "Carece de un punto de fusión definido debido a su desorden molecular.",
+      "Presenta una estructura cristalina latente que emerge bajo alta presión.",
+      "Requiere una temperatura constante para mantener su integridad física.",
+      "Posee un patrón atómico repetitivo que facilita la conducción térmica.",
+      "Genera una transición de fase súbita al alcanzar el equilibrio químico."
+    ],
+    ans: 0
+  },
+  {
+    q: "En la formulación del vidrio sodocálcico, ¿cuál es la función técnica crítica del Óxido de Sodio (Na₂O)?",
+    opts: [
+      "Reducir drásticamente la temperatura de fusión de la sílice pura.",
+      "Incrementar la resistencia química ante la exposición de ácidos.",
+      "Evitar que el material se disuelva al entrar en contacto con agua.",
+      "Aportar el brillo y la dispersión de luz necesarios en óptica.",
+      "Elevar la dureza mecánica en la escala de Mohs hasta el nivel 9."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Por qué el vidrio se considera un material con \"fragilidad inherente\" desde una perspectiva de diseño de ingeniería?",
+    opts: [
+      "Se fractura sin presentar deformación plástica previa ante el estrés.",
+      "Pierde su transparencia óptica cuando se somete a cargas de tracción.",
+      "Reacciona químicamente con el oxígeno al sufrir una rotura mecánica.",
+      "Disminuye su densidad estructural tras ser reciclado múltiples veces.",
+      "Presenta una dureza insuficiente para resistir la abrasión superficial."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Cuál es el fenómeno físico que permite la transparencia óptica en el vidrio?",
+    opts: [
+      "Ausencia de una estructura cristalina que disperse los fotones incidentes.",
+      "Alineación paralela de las moléculas de sílice con el espectro visible.",
+      "Absorción total de la radiación infrarroja por parte de los aditivos.",
+      "Reflexión interna total generada por la alta densidad del óxido de plomo.",
+      "Difracción simétrica de la luz a través de su red atómica organizada."
+    ],
+    ans: 0
+  },
+  {
+    q: "En el proceso de fabricación, ¿qué beneficio termodinámico aporta la inclusión de \"Cullet\" (vidrio reciclado) en la mezcla?",
+    opts: [
+      "Disminuye la energía calórica requerida para iniciar la fusión líquida.",
+      "Aumenta la viscosidad del material para facilitar el corte de precisión.",
+      "Elimina la necesidad de utilizar agentes fundentes como la sosa cáustica.",
+      "Incrementa la resistencia final al choque térmico en vidrios de borosilicato.",
+      "Estabiliza la estructura molecular para evitar la formación de burbujas."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Qué principio físico fundamenta la planitud excepcional lograda en el proceso de \"vidrio flotado\"?",
+    opts: [
+      "Equilibrio de fuerzas entre la gravedad y la tensión superficial del baño.",
+      "Aplicación de presión neumática uniforme sobre la lámina en movimiento.",
+      "Uso de rodillos mecánicos sincronizados para aplanar la masa viscosa.",
+      "Enfriamiento criogénico rápido que congela la superficie del material.",
+      "Magnetismo inducido por el estaño fundido sobre las moléculas de sílice."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Cuál es el objetivo diagnóstico del proceso de \"Recocido\" en el túnel Lehr?",
+    opts: [
+      "Liberar gradualmente las tensiones internas para evitar fracturas críticas.",
+      "Aumentar la dureza superficial del material por encima de 7 en Mohs.",
+      "Facilitar la adhesión de capas poliméricas en vidrios de tipo laminado.",
+      "Modificar el índice de refracción para aplicaciones de óptica avanzada.",
+      "Reducir el contenido de óxido de calcio para mejorar la durabilidad."
+    ],
+    ans: 0
+  },
+  {
+    q: "Ante una necesidad de diseño que requiere resistencia a variaciones térmicas extremas, ¿qué alteración química es la más adecuada?",
+    opts: [
+      "Incorporar una alta proporción de óxido de boro (B₂O₃) en la composición.",
+      "Aumentar la concentración de óxido de sodio para bajar el punto de fusión.",
+      "Añadir más del 24% de óxido de plomo para mejorar la dispersión térmica.",
+      "Reducir el porcentaje de arena de sílice a menos del 50% del peso total.",
+      "Aplicar una capa de polivinil butiral entre dos láminas de vidrio estándar."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Cómo se logra la propiedad de seguridad del \"vidrio templado\" ante un impacto mecánico?",
+    opts: [
+      "Creando tensiones de compresión mediante un tratamiento térmico rápido.",
+      "Insertando una malla metálica microscópica dentro de la masa fundida.",
+      "Laminando múltiples capas de vidrio con resinas plásticas intermedias.",
+      "Incrementando el espesor de la lámina mediante la reducción de velocidad.",
+      "Utilizando aditivos químicos que aumentan la elasticidad de los enlaces."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Cuál es la ventaja técnica principal del \"vidrio laminado\" en infraestructuras de alta seguridad?",
+    opts: [
+      "Mantiene los fragmentos adheridos a una capa plástica tras la rotura.",
+      "Posee una inercia química superior que resiste ataques con ácidos fuertes.",
+      "Presenta una densidad atómica que bloquea la radiación gamma y rayos X.",
+      "Ofrece la mayor dureza posible dentro de la escala de materiales inorgánicos.",
+      "Permite la transmisión del 100% de la luz visible sin ninguna pérdida."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Por qué el estaño es el material elegido para el baño de flotado en lugar de otros metales?",
+    opts: [
+      "Posee una densidad mayor que el vidrio y un bajo punto de fusión.",
+      "Reacciona químicamente con la sílice para sellar los poros superficiales.",
+      "Actúa como un aislante térmico que mantiene el calor dentro del horno.",
+      "Permite que el vidrio se sumerja completamente para un pulido bifacial.",
+      "Tiene una tensión superficial idéntica a la del vidrio a mil grados Celsius."
+    ],
+    ans: 0
+  },
+  {
+    q: "En la escala de Mohs, el vidrio posee una dureza de 5.5. ¿Qué implica esto para su mantenimiento industrial?",
+    opts: [
+      "Es resistente a los rayados por materiales comunes como el feldespato.",
+      "Requiere un recubrimiento metálico para evitar la corrosión por el aire.",
+      "Puede ser rayado fácilmente por cualquier utensilio de cocina de plástico.",
+      "Necesita ser pulido mecánicamente de forma constante tras su fabricación.",
+      "Posee una estructura tan blanda que se deforma bajo su propio peso."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Cuál es el factor determinante para controlar el grosor exacto de la lámina de vidrio en la línea de producción?",
+    opts: [
+      "Ajustar la velocidad a la que se extrae la lámina del baño de estaño.",
+      "Modificar la presión atmosférica dentro del túnel de recocido o Lehr.",
+      "Variar el porcentaje de óxido de calcio presente en la mezcla inicial.",
+      "Cambiar la temperatura de los quemadores en la zona final del horno.",
+      "Aumentar la cantidad de cullet utilizado durante la fase de dosificación."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Qué función cumple el Óxido de Calcio (Cal) en la composición química del vidrio comercial?",
+    opts: [
+      "Aporta durabilidad química y evita la desintegración por humedad.",
+      "Reduce la viscosidad para permitir un vertido más rápido en el molde.",
+      "Proporciona el color característico verdoso de los envases industriales.",
+      "Aumenta la capacidad de aislamiento eléctrico en componentes de microchips.",
+      "Actúa como el principal agente responsable de la transparencia óptica."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Cuál es la propiedad del vidrio que lo hace invaluable para la industria farmacéutica?",
+    opts: [
+      "Excepcional inercia química que evita la contaminación del contenido.",
+      "Alta conductividad térmica que permite el calentamiento rápido del fármaco.",
+      "Estructura porosa que facilita el intercambio gaseoso controlado con el medio.",
+      "Capacidad de absorber toda la luz ultravioleta sin necesidad de aditivos.",
+      "Flexibilidad mecánica que permite su sellado mediante presión en frío."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Qué diferencia estructural define el comportamiento de un material cristalino frente al vidrio?",
+    opts: [
+      "Presencia de una red atómica altamente ordenada y repetitiva a largo alcance.",
+      "Inexistencia de enlaces químicos fuertes entre las moléculas de silicio.",
+      "Capacidad de transmitir la luz sin generar ningún tipo de sombra óptica.",
+      "Mayor resistencia a la fractura cuando se somete a cambios de temperatura.",
+      "Necesidad de temperaturas menores para alcanzar el estado de fusión líquida."
+    ],
+    ans: 0
+  },
+  {
+    q: "El vidrio de cristal (vidrio de plomo) es preferido en óptica de precisión debido a su:",
+    opts: [
+      "Alta densidad, brillo y capacidad de dispersión de la luz excepcional.",
+      "Resistencia superior a los choques térmicos en entornos de laboratorio.",
+      "Facilidad para ser reciclado infinitamente sin perder pureza estructural.",
+      "Bajo costo de producción comparado con el vidrio de borosilicato.",
+      "Capacidad de romperse en fragmentos pequeños y seguros tras un impacto."
+    ],
+    ans: 0
+  },
+  {
+    q: "Desde un punto de vista de sostenibilidad, ¿qué característica distingue al vidrio de otros materiales sintéticos?",
+    opts: [
+      "Capacidad de ser reciclado infinitas veces sin perder calidad estructural.",
+      "Biodegradabilidad rápida cuando se deposita en entornos marinos abiertos.",
+      "Reducción espontánea de su temperatura de fusión con el paso de las décadas.",
+      "Reabsorción de dióxido de carbono atmosférico durante su vida útil.",
+      "Transformación en arena de sílice pura tras ser expuesto a la luz solar."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Cuál es el riesgo crítico de omitir el uso de un \"Túnel de Recocido\" en una planta industrial?",
+    opts: [
+      "Fractura espontánea de las láminas debido a tensiones térmicas internas.",
+      "Pérdida total de la transparencia por la cristalización lenta del material.",
+      "Reducción del grosor de la lámina por debajo de los estándares comerciales.",
+      "Contaminación del vidrio por la absorción de gases del estaño fundido.",
+      "Aumento descontrolado del punto de fusión en futuros ciclos de reciclaje."
+    ],
+    ans: 0
+  },
+  {
+    q: "¿Qué combinación de factores define el \"Ecosistema del Vidrio\" según la síntesis del material?",
+    opts: [
+      "Manipulación atómica, diseño molecular e innovación en manufactura.",
+      "Extracción mineral, comercialización global y logística de distribución.",
+      "Resistencia al calor, aislamiento eléctrico y pureza de los aditivos.",
+      "Densidad de los materiales, velocidad de enfriamiento y marketing industrial.",
+      "Historia milenaria, simplicidad de la receta y valor de mercado global."
+    ],
+    ans: 0
+  }
+];
+
+/* ══════════════════════════════════════════════════════════════
+   CONSTANTS
+══════════════════════════════════════════════════════════════ */
+const NUM_Q    = 10;
+const PASSWORD = 'Tecno2026';
+const LETTERS  = ['A','B','C','D','E'];
+
+/* ══════════════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════════════ */
+let questions   = [];   // [{q, opts (shuffled), correctIdx}]
+let current     = 0;
+let userAnswers = [];   // selected shuffled index or null
+let finished    = false;
+let corrected   = false;
+
+/* ══════════════════════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════════════════════ */
+function shuffleArr(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickRandom(arr, n) {
+  return shuffleArr(arr).slice(0, n);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BUILD QUIZ
+══════════════════════════════════════════════════════════════ */
+function buildQuiz() {
+  const pool = pickRandom(ALL_QUESTIONS, NUM_Q);
+  questions = pool.map(orig => {
+    const correctText = orig.opts[orig.ans];
+    const shuffled    = shuffleArr([...orig.opts]);
+    return { q: orig.q, opts: shuffled, correctIdx: shuffled.indexOf(correctText) };
+  });
+  current     = 0;
+  userAnswers = new Array(NUM_Q).fill(null);
+  finished    = false;
+  corrected   = false;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   START QUIZ
+══════════════════════════════════════════════════════════════ */
+function startQuiz() {
+  const el  = document.documentElement;
+  const rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+  if (rfs) rfs.call(el).catch(() => {});
+
+  buildQuiz();
+  document.getElementById('welcome-screen').style.display  = 'none';
+  document.getElementById('results-screen').style.display  = 'none';
+  document.getElementById('quiz-screen').style.display     = 'flex';
+  renderQuestion();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════════════════════════ */
+function renderQuestion() {
+  const q = questions[current];
+  const n = current + 1;
+
+  document.getElementById('q-num').textContent  = `Pregunta ${n} de ${NUM_Q}`;
+  document.getElementById('q-text').textContent = q.q;
+
+  // Progress
+  const answered = userAnswers.filter(a => a !== null).length;
+  document.getElementById('prog-text').textContent = `${answered} / ${NUM_Q}`;
+  document.getElementById('prog-fill').style.width  = `${(answered / NUM_Q) * 100}%`;
+
+  // Options
+  const optsEl = document.getElementById('options');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opt-item';
+
+    if (corrected) {
+      div.classList.add('locked');
+      const ua = userAnswers[current];
+      if (i === q.correctIdx)            div.classList.add('correct');
+      if (i === ua && ua !== q.correctIdx) div.classList.add('wrong');
+    } else if (finished) {
+      div.classList.add('locked');
+      if (i === userAnswers[current]) div.classList.add('selected');
+    } else {
+      if (i === userAnswers[current]) div.classList.add('selected');
+      div.addEventListener('click', () => selectOption(i));
+    }
+
+    div.innerHTML = `<div class="opt-radio"></div><div class="opt-label">${LETTERS[i]}. ${opt}</div>`;
+    optsEl.appendChild(div);
+  });
+
+  // Nav buttons
+  document.getElementById('btn-prev').disabled = current === 0;
+  const isLast = current === NUM_Q - 1;
+
+  if (!finished) {
+    document.getElementById('btn-next').classList.toggle('hidden', isLast);
+    document.getElementById('btn-finish').classList.toggle('hidden', !isLast);
+  } else {
+    document.getElementById('btn-next').classList.toggle('hidden', isLast);
+    document.getElementById('btn-finish').classList.add('hidden');
+    if (isLast) document.getElementById('btn-next').classList.add('hidden');
+  }
+
+  // "Nueva prueba" only visible after correction
+  document.getElementById('btn-new').style.display = corrected ? 'inline-flex' : 'none';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SELECT OPTION
+══════════════════════════════════════════════════════════════ */
+function selectOption(idx) {
+  if (finished || corrected) return;
+  userAnswers[current] = (userAnswers[current] === idx) ? null : idx;
+  renderQuestion();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   NAVIGATE
+══════════════════════════════════════════════════════════════ */
+function navigate(dir) {
+  current = Math.max(0, Math.min(NUM_Q - 1, current + dir));
+  renderQuestion();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FINISH
+══════════════════════════════════════════════════════════════ */
+function finishQuiz() {
+  const unanswered = userAnswers.filter(a => a === null).length;
+  if (unanswered > 0) {
+    const go = confirm(`Tenés ${unanswered} pregunta(s) sin responder. ¿Querés finalizar igual?`);
+    if (!go) return;
+  }
+  finished = true;
+  current  = 0;
+  document.getElementById('btn-finish').classList.add('hidden');
+  document.getElementById('btn-next').classList.remove('hidden');
+  renderQuestion();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PASSWORD MODAL
+══════════════════════════════════════════════════════════════ */
+function openModal() {
+  if (!finished) {
+    alert('Primero debés finalizar la evaluación presionando "Finalizar ✓".');
+    return;
+  }
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').textContent = '';
+  document.getElementById('pw-modal').classList.add('active');
+  setTimeout(() => document.getElementById('pw-input').focus(), 80);
+}
+
+function closeModal() {
+  document.getElementById('pw-modal').classList.remove('active');
+}
+
+function confirmPw() {
+  const val = document.getElementById('pw-input').value;
+  if (val === PASSWORD) {
+    closeModal();
+    showResults();
+  } else {
+    document.getElementById('pw-error').textContent =
+      'Contraseña incorrecta. Solicitá la corrección a tu profesor.';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SHOW RESULTS
+══════════════════════════════════════════════════════════════ */
+function showResults() {
+  corrected = true;
+
+  // Exit fullscreen
+  const exFS = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+  if (exFS) exFS.call(document).catch(() => {});
+
+  let correct = 0, wrong = 0, skip = 0;
+  questions.forEach((q, i) => {
+    const ua = userAnswers[i];
+    if (ua === null)            skip++;
+    else if (ua === q.correctIdx) correct++;
+    else                        wrong++;
+  });
+
+  const pct = Math.round((correct / NUM_Q) * 100);
+  let msg = '';
+  if      (pct >= 90) msg = '🏆 ¡Excelente! Dominio técnico sobresaliente.';
+  else if (pct >= 70) msg = '✅ Buen desempeño. Repasá los errores.';
+  else if (pct >= 50) msg = '⚠️ Aprobado. Reforzá los fundamentos.';
+  else                msg = '❌ Necesitás repasar el material. ¡No te rindas!';
+
+  document.getElementById('res-score').textContent = `${correct} / ${NUM_Q}`;
+  document.getElementById('res-pct').textContent   = `🎯 ${pct}% de aciertos — ${msg}`;
+  document.getElementById('st-ok').textContent     = `✅ Correctas: ${correct}`;
+  document.getElementById('st-err').textContent    = `❌ Incorrectas: ${wrong}`;
+  document.getElementById('st-skip').textContent   = `⬜ Sin responder: ${skip}`;
+
+  // Review
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  questions.forEach((q, i) => {
+    const ua     = userAnswers[i];
+    const isSkip = ua === null;
+    const isOk   = !isSkip && ua === q.correctIdx;
+
+    const item   = document.createElement('div');
+    item.className = 'review-item';
+
+    let tag = '';
+    let detail = '';
+
+    if (isSkip) {
+      tag    = `<span class="ri-tag sk">SIN RESPONDER</span>`;
+      detail = `<span>Correcta: ${LETTERS[q.correctIdx]}. ${q.opts[q.correctIdx]}</span>`;
+    } else if (isOk) {
+      tag    = `<span class="ri-tag ok">CORRECTA ✓</span>`;
+      detail = `<span>${LETTERS[ua]}. ${q.opts[ua]}</span>`;
+    } else {
+      tag    = `<span class="ri-tag err">INCORRECTA ✗</span>`;
+      detail = `<span>Tu respuesta: ${LETTERS[ua]}. ${q.opts[ua]}</span>
+                <span class="ri-correct-note">✓ Correcta: ${LETTERS[q.correctIdx]}. ${q.opts[q.correctIdx]}</span>`;
+    }
+
+    item.innerHTML = `
+      <div class="ri-q">${i+1}. ${q.q}</div>
+      <div class="ri-ans">${tag}${detail}</div>`;
+    list.appendChild(item);
+  });
+
+  document.getElementById('btn-new-results').style.display = 'inline-flex';
+
+  document.getElementById('quiz-screen').style.display    = 'none';
+  document.getElementById('results-screen').style.display = 'flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   NEW QUIZ
+══════════════════════════════════════════════════════════════ */
+function newQuiz() {
+  buildQuiz();
+  document.getElementById('results-screen').style.display  = 'none';
+  document.getElementById('welcome-screen').style.display  = 'none';
+  document.getElementById('quiz-screen').style.display     = 'flex';
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Re-enter fullscreen
+  const el  = document.documentElement;
+  const rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+  if (rfs) rfs.call(el).catch(() => {});
+}
+</script>
+</body>
+</html>
